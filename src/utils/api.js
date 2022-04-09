@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2022-04-08 18:25:29
- * @LastEditTime: 2022-04-09 14:32:39
+ * @LastEditTime: 2022-04-09 15:04:54
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /yeb/src/utils/api.js
@@ -12,9 +12,9 @@ import axios from 'axios'
 import { Message } from 'element-ui'
 import router from '../router'
 
-axios.interceptors.response.use((success) => {
+axios.interceptors.response.use(success => {
 
-    if(success.status && success.status == 200 ){
+    if(success.status && success.status == 200){
 
         if(success.data.code==500|| success.data.code==401 || success.data.code==403){
 
@@ -60,7 +60,7 @@ export const postRequest = (url,params)=>{
     
     return axios({
         method:'post',
-         url:'${base}-${url}',
+        url: `${base}${url}`,
         data:params
     })
 

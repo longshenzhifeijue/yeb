@@ -3,7 +3,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-04-08 15:18:51
- * @LastEditTime: 2022-04-09 14:30:12
+ * @LastEditTime: 2022-04-09 14:54:37
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /yeb/src/views/Login.vue
@@ -66,7 +66,7 @@ export default {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
           postRequest('/login', this.loginForm).then(resp => {
-            alert(resp)
+            alert(JSON.stringify(resp)) 
           })
         } else {
           this.$message.error('请输入所有字段')
