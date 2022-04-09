@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2022-04-08 18:25:29
- * @LastEditTime: 2022-04-09 15:04:54
+ * @LastEditTime: 2022-04-09 15:29:49
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /yeb/src/utils/api.js
@@ -11,6 +11,24 @@
 import axios from 'axios'
 import { Message } from 'element-ui'
 import router from '../router'
+
+
+
+axios.interceptors.response.use(config => {
+
+    // 如果存在token,请求携带这个token
+   if( window.sessionStorage.getItem('tokenStr')){
+       config.headers['Authorization'] = window.sessionStorage.getItem('tokenStr')
+   }
+
+   return config;
+
+},error => {
+
+    console.log(error);
+
+})
+
 
 axios.interceptors.response.use(success => {
 
@@ -60,7 +78,38 @@ export const postRequest = (url,params)=>{
     
     return axios({
         method:'post',
-        url: `${base}${url}`,
+        url: `${base} ${url}`,
+        data:params
+    })
+
+}
+
+
+export const putRequest = (url,params)=>{
+    
+    return axios({
+        method:'put',
+        url: `${base} ${url}`,
+        data:params
+    })
+
+}
+
+export const getRequest = (url,params)=>{
+    
+    return axios({
+        method:'get',
+        url: `${base} ${url}`,
+        data:params
+    })
+
+}
+
+export const deleteRequest = (url,params)=>{
+    
+    return axios({
+        method:'delete',
+        url: `${base} ${url}`,
         data:params
     })
 

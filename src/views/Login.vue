@@ -3,14 +3,24 @@
 <!--
  * @Author: your name
  * @Date: 2022-04-08 15:18:51
- * @LastEditTime: 2022-04-09 14:54:37
+ * @LastEditTime: 2022-04-09 15:36:33
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /yeb/src/views/Login.vue
 -->
 <template>
   <div>
-    <el-form :rules="rules" ref="loginForm" :model="loginForm" class="loginContainer">
+    <el-form :rules="rules" 
+
+    v-loading="loading"
+    element-loading-text="正在登录"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)"
+
+
+    ref="loginForm" 
+    :model="loginForm" 
+    class="loginContainer">
       <h3 class="loginTitle">系统登录</h3>
       <el-form-item prop="username">
         <el-input type="text" auto-complete="false" v-model="loginForm.username" placeholder="请输入用户姓名"></el-input>
@@ -37,6 +47,7 @@
 </template>
 
 <script>
+// 自动导入了
 import { postRequest } from '@/utils/api'
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
@@ -49,6 +60,7 @@ export default {
         password: '123',
         code: ''
       },
+      loading: false,
       checked: true,
       rules: {
         username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
@@ -65,8 +77,17 @@ export default {
     submitLogin() {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
+          this.loading = true;
           postRequest('/login', this.loginForm).then(resp => {
-            alert(JSON.stringify(resp)) 
+              if(resp){
+                // 存储用户token
+                this.loading=false;
+                const tokenStr  = resp.obj.tokenHead+resp.obj.token
+                window.sessionStorage.setItem('tokenStr',tokenStr)
+                // 跳转首页
+                this.$router.replace('/home')
+              }
+
           })
         } else {
           this.$message.error('请输入所有字段')
