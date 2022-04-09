@@ -3,7 +3,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-04-08 15:18:51
- * @LastEditTime: 2022-04-08 17:58:17
+ * @LastEditTime: 2022-04-09 12:28:56
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /yeb/src/views/Login.vue
@@ -15,7 +15,6 @@
       <el-form-item prop="username">
         <el-input type="text" auto-complete="false" v-model="loginForm.username" placeholder="请输入用户姓名"></el-input>
       </el-form-item>
-
       <el-form-item prop="password">
         <el-input type="password" auto-complete="false" v-model="loginForm.password" placeholder="请输入用户密码"></el-input>
       </el-form-item>
@@ -28,7 +27,7 @@
           placeholder="点击图片,更换验证码"
           style="width: 250px;margin-right: 5px"
         ></el-input>
-        <img :src="captchaUrl" />
+        <img :src="captchaUrl" @click="updateCaptcha"  class="el-form-item__contents"/>
       </el-form-item>
 
       <el-checkbox v-model="checked" class="loginRemember">记住我</el-checkbox>
@@ -39,10 +38,11 @@
 
 <script>
 export default {
+  // eslint-disable-next-line vue/multi-word-component-names
   name: 'Login',
   data() {
     return {
-      captchaUrl: {},
+      captchaUrl: '/captcha?time=' + new Date(),
       loginForm: {
         username: 'admin',
         password: '123',
@@ -57,6 +57,10 @@ export default {
     }
   },
   methods: {
+    updateCaptcha() {
+      this.captchaUrl = '/captcha?time=' + new Date()
+    },
+
     submitLogin() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
@@ -91,4 +95,14 @@ export default {
   text-align: left;
   margin: 0px 0px 15px 0px;
 }
+
+.el-form-item__content{
+  display: flex;
+  align-items: center;
+}
+
+ /* .el-form-item__content {
+    display: flex;
+    align-items: center;
+  } */
 </style>
