@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-04-09 15:08:06
- * @LastEditTime: 2022-04-11 10:45:28
+ * @LastEditTime: 2022-04-11 11:34:25
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /yeb/src/views/Home.vue
@@ -12,14 +12,27 @@
       <el-header>Header</el-header>
       <el-container>
         <el-aside width="200px">
-          <el-menu @select="menuClick">
-            <el-submenu index="1">
-              <template slot="title"
-                ><i class="el-icon-location"></i>导航一</template
+          <el-menu router>
+              
+            <template v-for="(item, index) in this.$router.options.routes">
+              <el-submenu
+                index="1"
+                
+                :key="index"
+                v-if="!item.hidden"
               >
-              <el-menu-item index="/test1">选项1</el-menu-item>
-              <el-menu-item index="/test2">选项2</el-menu-item>
-            </el-submenu>
+                <template slot="title"
+                  ><i class="el-icon-location"></i>{{ item.name }}</template
+                >
+                <el-menu-item
+                  :index="children.path"
+                  v-for="(children, index) in item.children"
+                  :key="index"
+                  >{{ children.name }}</el-menu-item
+                >
+              </el-submenu>
+            </template>
+            
           </el-menu>
         </el-aside>
 
@@ -34,11 +47,6 @@
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: "Home",
-  methods:{
-      menuClick(index){
-          this.$router.push(index);
-      }
-  }
 };
 </script>
 
