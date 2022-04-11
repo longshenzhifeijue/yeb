@@ -1,14 +1,13 @@
 /*
  * @Author: your name
  * @Date: 2022-04-11 15:01:06
- * @LastEditTime: 2022-04-11 16:13:54
+ * @LastEditTime: 2022-04-11 16:26:10
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /yeb/src/utils/menus.js
  */
 import router from "../router";
 import { getRequest } from "./api";
-import { resolve } from "core-js/es6/promise";
 
 export const initMenu = (router, store) => {
   if (store.state.routers.length > 0) {
