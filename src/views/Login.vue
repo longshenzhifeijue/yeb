@@ -3,7 +3,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-04-08 15:18:51
- * @LastEditTime: 2022-04-09 15:36:33
+ * @LastEditTime: 2022-04-09 15:46:22
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /yeb/src/views/Login.vue
@@ -47,8 +47,8 @@
 </template>
 
 <script>
-// 自动导入了
-import { postRequest } from '@/utils/api'
+// 自动导入了,利用插件方法用
+// import { postRequest } from '@/utils/api'
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: 'Login',
@@ -78,7 +78,7 @@ export default {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
           this.loading = true;
-          postRequest('/login', this.loginForm).then(resp => {
+          this.postRequest('/login', this.loginForm).then(resp => {
               if(resp){
                 // 存储用户token
                 this.loading=false;
