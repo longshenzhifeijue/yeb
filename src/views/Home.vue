@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-04-09 15:08:06
- * @LastEditTime: 2022-04-12 16:25:33
+ * @LastEditTime: 2022-04-12 16:50:12
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /yeb/src/views/Home.vue
@@ -54,9 +54,20 @@
           </el-menu>
         </el-aside>
 
-        <el-main>
-          <router-view> </router-view>
+         <el-main>
+              <el-breadcrumb separator-class="el-icon-arrow-right" v-if="this.$router.currentRoute.path!='/home'">
+            <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
+            <el-breadcrumb-item>{{this.$router.currentRoute.name}}</el-breadcrumb-item>
+          </el-breadcrumb>
+          <div class="homeWelcome" v-if="this.$router.currentRoute.path == '/home' "> 
+              欢迎来到云E办系统
+          </div>
+                  <router-view class="homeRouterView"/>
+
         </el-main>
+
+    
+
       </el-container>
     </el-container>
   </div>
