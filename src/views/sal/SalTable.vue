@@ -10,12 +10,12 @@
 
 <template>
     <div>
-        员工账套设置
+        工资表管理
     </div>
 </template>
 <script>
 export default {
-    name:"SalSobCfg"
+    name:"SalTable"
 }
 </script>
 <style scoped>
