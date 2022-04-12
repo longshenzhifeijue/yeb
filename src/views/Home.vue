@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-04-09 15:08:06
- * @LastEditTime: 2022-04-12 14:31:06
+ * @LastEditTime: 2022-04-12 14:47:39
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /yeb/src/views/Home.vue
@@ -12,11 +12,11 @@
       <el-header>Header</el-header>
       <el-container>
         <el-aside width="200px">
-          <el-menu router>
+          <el-menu router unique-opened>
             <template v-for="(item, index) in routes">
-              <el-submenu index="1" v-if="!item.hidden" :key="index">
+              <el-submenu :index="index+''" v-if="!item.hidden" :key="index">
                 <template slot="title"
-                  ><i class="el-icon-location"></i>{{ item.name }}</template
+                  ><i :class="item.iconCls" style="color: #1accff; margin-right: 6px"></i>{{ item.name }}</template
                 >
                 <el-menu-item
                   :index="children.path"

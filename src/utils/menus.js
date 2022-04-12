@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2022-04-11 15:01:06
- * @LastEditTime: 2022-04-12 13:53:34
+ * @LastEditTime: 2022-04-12 15:07:21
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /yeb/src/utils/menus.js
@@ -12,10 +12,10 @@ export const initMenu = (router, store) => {
   if (store.state.routes.length > 0) {
     return;
   }
-  getRequest("/system/cfg/menu").then(data => {
+  getRequest("/system/cfg/menu").then((data) => {
     if (data) {
       // 格式化Route
-      let fmtRoutes = formatRoutes(data); 
+      let fmtRoutes = formatRoutes(data);
       // 添加到Route
       router.addRoutes(fmtRoutes);
       // 将数据存储到vuex
@@ -40,20 +40,24 @@ export const formatRoutes = (routes) => {
       iconCls: iconCls,
       children: children,
       component(resolve) {
-        if (component.startsWith("Emp")) {
-          require(["../views/emp" + component + ".Vue"], resolve);
+        if (component.startsWith("Home")) {
+          require(['../views/' + component + '.vue'], resolve);
+        } else if (component.startsWith("Emp")) {
+          require(['../views/emp/' + component + '.vue'], resolve);
         } else if (component.startsWith("Per")) {
-          require(["../views/per" + component + ".Vue"], resolve);
+          require(['../views/per/' + component + '.vue'], resolve);
         } else if (component.startsWith("Sal")) {
-          require(["../views/sal" + component + ".Vue"], resolve);
+          require(['../views/sal/' + component + '.vue'], resolve);
         } else if (component.startsWith("Sta")) {
-          require(["../views/sta" + component + ".Vue"], resolve);
+          require(['../views/sta/' + component + '.vue'], resolve);
         } else if (component.startsWith("Sys")) {
-          require(["../views/sys" + component + ".Vue"], resolve);
+          require(['../views/sys/' + component + '.vue'], resolve);
         }
+
+        
       },
     };
-    
+
     fmRoutes.push(fomRouter);
   });
   return fmRoutes;
