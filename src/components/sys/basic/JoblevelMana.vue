@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-04-12 17:24:43
- * @LastEditTime: 2022-04-13 17:32:01
+ * @LastEditTime: 2022-04-13 21:41:44
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /yeb/src/components/sys/JoblebelMana.vue
@@ -11,11 +11,12 @@
     <div>
       <el-input
         v-model="jl.name"
-        size='small'
+        size="small"
         placeholder="添加职称等级..."
         prefix-icon="el-icon-plus"
         style="width: 300px"
       ></el-input>
+
       <el-select
         size="small"
         v-model="jl.titleLevel"
@@ -31,13 +32,26 @@
         </el-option>
       </el-select>
 
-      <el-button type="primary" icon="el-icon-plus" size="small"
+      <el-button
+        type="primary"
+        icon="el-icon-plus"
+        size="small"
+        @click="addJoblevelMana"
         >添加</el-button
       >
     </div>
 
-    <div style="margin-top:10px">
-      <el-table :data="jls" stripe border size='small' style="width: 70%">
+    <div style="margin-top: 10px">
+      <el-table
+        :data="jls"
+        stripe
+        border
+        size="small"
+        @selection-change="handleSelectionChange"
+        style="width: 70%"
+      >
+        <!-- <el-table-column type="selection" width="55"></el-table-column> -->
+
         <el-table-column prop="id" label="编号" width="55"> </el-table-column>
         <el-table-column prop="name" label="职称名称" width="150">
         </el-table-column>
@@ -46,21 +60,92 @@
         <el-table-column prop="createDate" label="创建日期" width="150">
         </el-table-column>
         <el-table-column prop="enabled" label="是否启用" width="150">
-        </el-table-column>
-
-
-        <el-table-column  label="操作" >
           <template slot-scope="scope">
-             
-                <el-button size="small" @click="showEditView(scope.$index, scope.row)">编辑</el-button>
-                <el-button size="small" @click="sal">删除</el-button>
-
-            </template>
+            <el-tag v-if="scope.row.enabled" type="success">已启用</el-tag>
+            <el-tag v-else type="danger ">未启用</el-tag>
+          </template>
         </el-table-column>
 
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <!-- scope这行,index这行索引,scope.row这行数据 -->
+            <el-button
+              size="small"
+              @click="showEditView(scope.$index, scope.row)"
+              >编辑</el-button
+            >
+            <el-button
+              size="small"
+              type="danger"
+              @click="handleDelete(scope.$index, scope.row)"
+              >删除</el-button
+            >
+          </template>
+        </el-table-column>
       </el-table>
-
     </div>
+
+    <el-dialog title="编辑职称" :visible.sync="dialogVisible" width="30%">
+      <table>
+        <tr>
+          <td><el-tag> 职称名称 </el-tag></td>
+          <td>
+            <el-input
+              size="small"
+              v-model="updateJoblevelMana.name"
+              style="margin-left: 10px"
+            ></el-input>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <el-tag>职称等级</el-tag>
+          </td>
+          <td>
+            <el-select
+              size="small"
+              v-model="updateJoblevelMana.titleLevel"
+              placeholder="职称等级"
+              style="margin-left: 10px; margin-right: 6px"
+            >
+              <el-option
+                v-for="item in titleLevels"
+                :key="item"
+                :label="item"
+                :value="item"
+              >
+              </el-option>
+            </el-select>
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+              <el-tag >
+是否启用
+              </el-tag>
+              </td>
+          <td>
+            <el-switch
+              v-model="updateJoblevelMana.enabled"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              active-text="已启用"
+              inactive-text="未启用"
+              style="margin-left: 10px"
+            >
+            </el-switch>
+          </td>
+        </tr>
+      </table>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" @click="dialogVisible = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="doUpdate"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -75,9 +160,87 @@ export default {
       },
       titleLevels: ["正高级", "副高级", "中级", "初级", "员级"],
       jls: [],
+      dialogVisible: false,
+      updateJoblevelMana: {
+        name: "",
+        titleLevel: "",
+        enabled: false,
+      },
     };
+  },
+  mounted() {
+    this.initJls();
+  },
+  methods: {
+    initJls() {
+      this.getRequest("/system/basic/joblevel/").then((resp) => {
+        if (resp) {
+          this.jls = resp;
+          this.jl.name = "";
+          this.jl.titleLevel = "";
+        }
+      });
+    },
+    addJoblevelMana() {
+      if (this.jl.name && this.jl.titleLevel) {
+        this.postRequest("/system/basic/joblevel/", this.jl).then((resp) => {
+          if (resp) {
+            this.initJls();
+          }
+        });
+      } else {
+        this.$message.error("职称名称&&职称等级不能为空");
+      }
+    },
+    showEditView(index, data) {
+      Object.assign(this.updateJoblevelMana, data);
+      this.updateJoblevelMana.createDate = "";
+      // 显示编辑框
+      this.dialogVisible = true;
+    },
+    doUpdate() {
+      this.putRequest("/system/basic/joblevel/", this.updateJoblevelMana).then(
+        (resp) => {
+          if (resp) {
+            this.initJls();
+            this.dialogVisible = false;
+          }
+        }
+      );
+    },
+    handleDelete(index, data) {
+      this.$confirm(
+        "此操作将永久删除[" + data.name + "]职称, 是否继续?",
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }
+      )
+        .then(() => {
+          this.deleteRequest("/system/basic/joblevel/" + data.id).then(
+            (resp) => {
+              if (resp) {
+                this.initJls();
+              }
+            }
+          );
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
+    },
   },
 };
 </script>
 
-<style scoped></style>
+<style>
+.updateJoblebelManaInput {
+  width: 200px;
+  margin-left: 8px;
+}
+</style>
