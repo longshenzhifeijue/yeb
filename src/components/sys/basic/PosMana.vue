@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-04-12 17:24:19
- * @LastEditTime: 2022-04-13 14:51:45
+ * @LastEditTime: 2022-04-13 15:34:15
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /yeb/src/components/sys/PosMana.vue
@@ -45,7 +45,9 @@
         <el-table-column label="操作">
           <template slot-scope="scope">
             <!-- scope这行,index这行索引,scope.row这行数据 -->
-            <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
+            <el-button
+              size="mini"
+              @click="showEditView(scope.$index, scope.row)"
               >编辑</el-button
             >
             <el-button
@@ -58,6 +60,25 @@
         </el-table-column>
       </el-table>
     </div>
+
+    <el-dialog
+      title="编辑职位"
+      :visible.sync="dialogVisible"
+      width="30%"
+    
+    >
+<div>
+    <el-tag >职位名称</el-tag>
+    <el-input v-model="updatePos.name" size="small" class="updatePosInput"></el-input>
+
+</div>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" @click="dialogVisible = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="doUpdate"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -70,6 +91,11 @@ export default {
         name: "",
       },
       positions: [],
+      dialogVisible: false,
+      updatePos:{
+          name:'',
+          createDate:''
+      }
     };
   },
   mounted() {
@@ -83,26 +109,36 @@ export default {
         }
       });
     },
-    handleEdit() {},
+    showEditView(index, data) {
+        // 回显
+        // this.updatePos=data;
+        // 这里用拷贝,不用上面的赋值
+        Object.assign(this.updatePos,data)
+        this.updatePos.createDate='';
+      // 显示编辑框
+      this.dialogVisible = true;
+    },
     handleDelete(index, data) {
       this.$confirm(
         "此操作将永久删除[" + data.name + "]职位, 是否继续?",
-        "提示", {
+        "提示",
+        {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning",
         }
-      ).then(() => {
-          this.deleteRequest('/system/basic/pos/'+data.id).then(resp => {
-
+      )
+        .then(() => {
+          this.deleteRequest("/system/basic/pos/" + data.id).then((resp) => {
             if (resp) {
               this.initPositions();
             }
           });
-       }).catch(() => {
+        })
+        .catch(() => {
           this.$message({
-            type: 'info',
-            message: '已取消删除'
+            type: "info",
+            message: "已取消删除",
           });
         });
     },
@@ -118,6 +154,14 @@ export default {
         this.$message.error("职位名称不能为空");
       }
     },
+    doUpdate(){
+        this.putRequest('/system/basic/pos/',this.updatePos).then(resp=>{
+            if(resp){
+                this.initPositions();
+                this.dialogVisible=false;
+            }
+        })
+    }
   },
 };
 </script>
@@ -129,5 +173,9 @@ export default {
 }
 .posManaMain {
   margin-top: 10px;
+}
+.updatePosInput{
+    width: 200px;
+    margin-left: 8px;
 }
 </style>
