@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-04-12 17:24:19
- * @LastEditTime: 2022-04-13 15:34:15
+ * @LastEditTime: 2022-04-13 15:50:21
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /yeb/src/components/sys/PosMana.vue
@@ -28,7 +28,14 @@
     </div>
 
     <div class="posManaMain">
-      <el-table stripe border size="small" :data="positions" style="width: 70%">
+      <el-table
+        stripe
+        border
+        size="small"
+        :data="positions"
+        @selection-change="handleSelectionChange"
+        style="width: 70%"
+      >
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="id" label="编号" width="55"> </el-table-column>
         <el-table-column prop="name" label="职位" width="120">
@@ -60,18 +67,23 @@
         </el-table-column>
       </el-table>
     </div>
-
-    <el-dialog
-      title="编辑职位"
-      :visible.sync="dialogVisible"
-      width="30%"
-    
+    <el-button
+      size="small"
+      style="margin-top: 8px"
+      type="danger"
+      :disabled="this.multipleSelection.length == 0"
+      @click="deleteMany"
+      >批量删除</el-button
     >
-<div>
-    <el-tag >职位名称</el-tag>
-    <el-input v-model="updatePos.name" size="small" class="updatePosInput"></el-input>
-
-</div>
+    <el-dialog title="编辑职位" :visible.sync="dialogVisible" width="30%">
+      <div>
+        <el-tag>职位名称</el-tag>
+        <el-input
+          v-model="updatePos.name"
+          size="small"
+          class="updatePosInput"
+        ></el-input>
+      </div>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" @click="dialogVisible = false">取 消</el-button>
         <el-button size="small" type="primary" @click="doUpdate"
@@ -92,10 +104,11 @@ export default {
       },
       positions: [],
       dialogVisible: false,
-      updatePos:{
-          name:'',
-          createDate:''
-      }
+      updatePos: {
+        name: "",
+        createDate: "",
+      },
+      multipleSelection: [],
     };
   },
   mounted() {
@@ -110,11 +123,11 @@ export default {
       });
     },
     showEditView(index, data) {
-        // 回显
-        // this.updatePos=data;
-        // 这里用拷贝,不用上面的赋值
-        Object.assign(this.updatePos,data)
-        this.updatePos.createDate='';
+      // 回显
+      // this.updatePos=data;
+      // 这里用拷贝,不用上面的赋值
+      Object.assign(this.updatePos, data);
+      this.updatePos.createDate = "";
       // 显示编辑框
       this.dialogVisible = true;
     },
@@ -154,14 +167,48 @@ export default {
         this.$message.error("职位名称不能为空");
       }
     },
-    doUpdate(){
-        this.putRequest('/system/basic/pos/',this.updatePos).then(resp=>{
-            if(resp){
-                this.initPositions();
-                this.dialogVisible=false;
+    doUpdate() {
+      this.putRequest("/system/basic/pos/", this.updatePos).then((resp) => {
+        if (resp) {
+          this.initPositions();
+          this.dialogVisible = false;
+        }
+      });
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+      console.log(val);
+    },
+    deleteMany() {
+
+        this.$confirm(
+        "此操作将永久删除[" + this.multipleSelection.length + "]条职位, 是否继续?",
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }
+      )
+        .then(() => {
+            let ids ='?';
+            this.multipleSelection.forEach(item=>{
+                ids+='ids='+item.id+'&';
+            })
+          this.deleteRequest("/system/basic/pos/" + ids).then((resp) => {
+            if (resp) {
+              this.initPositions();
             }
+          });
         })
-    }
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
+
+    },
   },
 };
 </script>
@@ -174,8 +221,8 @@ export default {
 .posManaMain {
   margin-top: 10px;
 }
-.updatePosInput{
-    width: 200px;
-    margin-left: 8px;
+.updatePosInput {
+  width: 200px;
+  margin-left: 8px;
 }
 </style>
