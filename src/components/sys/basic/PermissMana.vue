@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-04-12 17:25:02
- * @LastEditTime: 2022-04-14 15:42:55
+ * @LastEditTime: 2022-04-14 16:27:21
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /yeb/src/components/sys/PermissMana.vue
@@ -27,8 +27,8 @@
       >
     </div>
 
-    <div>
-      <el-collapse accordion class="permissManaMain" @change="change">
+    <div class="permissManaMain">
+      <el-collapse v-model="activityName" accordion @change="change">
         <el-collapse-item
           :title="r.nameZh"
           :name="r.id"
@@ -46,8 +46,26 @@
             </div>
 
             <div>
-              <el-tree show-checkbox :data="allMenus" :props="defaultProps"></el-tree>
-              
+              <el-tree
+                show-checkbox
+                :data="allMenus"
+                ref="tree"
+                :props="defaultProps"
+                :default-checked-keys="selectedMenus"
+                node-key="id"
+              ></el-tree>
+
+              <div style="display: flex; justify-content: flex-end">
+                <el-button size="mini" @click="cancelUpdate"
+                  >取消修改</el-button
+                >
+                <el-button
+                  size="mini"
+                  type="primary"
+                  @click="doUpdate(r.id, index)"
+                  >确认修改</el-button
+                >
+              </div>
             </div>
           </el-card>
         </el-collapse-item>
@@ -71,23 +89,50 @@ export default {
         children: "children",
         label: "name",
       },
+      selectedMenus: [],
+      activityName: -1,
     };
   },
   mounted() {
     this.initRoles();
   },
   methods: {
-    change(rid) {
-        if(rid){
-                this.initAllMenus();
+    initSelectedMenus(rid) {
+      this.getRequest("/system/basic/permission/mid/" + rid).then((resp) => {
+        if (resp) {
+          this.selectedMenus = resp;
         }
+      });
     },
-    initAllMenus(){
-            this.getRequest('/system/basic/permission/menus/').then(resp=>{
-                if(resp){
-                    this.allMenus = resp;
-                }
-            })
+    doUpdate(rid, index) {
+      let tree = this.$refs.tree[index];
+      let selectedKeys = tree.getCheckedKeys(true);
+      let url = "/system/basic/permission/?rid=" + rid;
+      selectedKeys.forEach((key) => {
+        url += "&mids=" + key;
+      });
+      this.putRequest(url).then((resp) => {
+        if (resp) {
+          this.initRoles();
+          this.activityName = -1;
+        }
+      });
+    },
+    cancelUpdate() {
+      this.activityName = -1;
+    },
+    change(rid) {
+      if (rid) {
+        this.initAllMenus();
+        this.initSelectedMenus(rid);
+      }
+    },
+    initAllMenus() {
+      this.getRequest("/system/basic/permission/menus/").then((resp) => {
+        if (resp) {
+          this.allMenus = resp;
+        }
+      });
     },
     initRoles() {
       this.getRequest("/system/basic/permission/").then((resp) => {
