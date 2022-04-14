@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-04-11 16:00:15
- * @LastEditTime: 2022-04-13 22:02:47
+ * @LastEditTime: 2022-04-14 17:01:28
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /yeb/src/views/sys/SysBasic.vue
@@ -12,14 +12,7 @@
       <el-tab-pane label="部门管理" name="DepMana">
         <h1><DepMana></DepMana></h1>
         <table border="1">
-          <tr>
-            <td>姓名</td>
-            <td>地址</td>
-          </tr>
-          <tr>
-            <td>张三</td>
-            <td>李四</td>
-          </tr>
+          
         </table>
       </el-tab-pane>
       <el-tab-pane label="职位管理" name="PosMana"><PosMana></PosMana></el-tab-pane>
@@ -43,7 +36,7 @@ export default {
   name: "SysBasic",
   data() {
     return {
-      activeName: "PermissMana",
+      activeName: "DepMana",
     };
   },
   components: {
