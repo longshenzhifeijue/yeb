@@ -10,7 +10,7 @@
   <div>
     <div>
       <el-input
-        placeholder="请选择日期"
+        placeholder="添加部门"
         suffix-icon="el-icon-plus"
         v-model="pos.name"
       >
