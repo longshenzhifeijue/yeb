@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-04-12 17:25:02
- * @LastEditTime: 2022-04-14 16:27:21
+ * @LastEditTime: 2022-04-14 16:42:45
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /yeb/src/components/sys/PermissMana.vue
@@ -18,11 +18,13 @@
       </el-input>
       <el-input
         size="small"
-        v-model="role.name"
+        v-model="role.nameZh"
         placeholder="请输入角色中文名 "
+        @keydown.enter.native='doAddRole'
       >
       </el-input>
       <el-button size="small" type="primary" icon="el-icon-plus"
+      @click="doAddRole"
         >添加角色</el-button
       >
     </div>
@@ -42,6 +44,7 @@
                 style="float: right; padding: 3px 0"
                 type="text"
                 icon="el-icon-delete"
+                @click="doDeleteRole(r)"
               ></el-button>
             </div>
 
@@ -50,6 +53,7 @@
                 show-checkbox
                 :data="allMenus"
                 ref="tree"
+                :key="index"
                 :props="defaultProps"
                 :default-checked-keys="selectedMenus"
                 node-key="id"
@@ -97,6 +101,43 @@ export default {
     this.initRoles();
   },
   methods: {
+    doDeleteRole(role){
+this.$confirm(
+        "此操作将永久删除[" + role.nameZh + "]角色, 是否继续?",
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }
+      )
+        .then(() => {
+          this.deleteRequest("/system/basic/permission/role/" + role.id).then((resp) => {
+            if (resp) {
+              this.initRoles();
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
+    },
+    doAddRole(){
+      if(this.role.name && this.role.nameZh){
+        this.postRequest('/system/basic/permission/',this.role).then(resp=>{
+          if(resp){
+            this.initRoles();
+            this.role.name='';
+            this.role.nameZh='';
+          }
+        })
+      }else{
+        this.$message.error("所有字段不能为空")
+      }
+    },
     initSelectedMenus(rid) {
       this.getRequest("/system/basic/permission/mid/" + rid).then((resp) => {
         if (resp) {
@@ -113,7 +154,6 @@ export default {
       });
       this.putRequest(url).then((resp) => {
         if (resp) {
-          this.initRoles();
           this.activityName = -1;
         }
       });
