@@ -28,7 +28,7 @@ module.exports = {
         ignores: ["Test2", "Test1", "Login"], //需要忽略的组件名
       },
     ],
-    "vue/no-unused-components": "off"
-
+    "vue/no-unused-components": "off",
+    "no-unused-vars": 'off'
   },
 };

@@ -8,14 +8,49 @@
 -->
 <template>
     <div>
-    基本资料
+        <div>
+
+            <div>
+                <el-input style="width: 300px;margin-right:10px ; prefix-icon=:el-icon-search"
+                    placeholder="请输入员工名进行搜索...">
+                </el-input>
+
+
+                <el-button type = "primary" icon= "el-icon-search">搜AAAAAAAAAAAAAAA索</el-button>
+               
+                <!-- <el-button type="primary">
+                    <i class="fa fa-angle-double-down" aria-hidden="true">
+                    </i>
+                    高级搜索
+
+                </el-button> -->
+            </div>
+
+
+            <!-- <div>
+
+                <el-buttton type="success">
+                    <i class="fa fa-level-up" aria-hidden="true"></i>
+                    导入数据
+                </el-buttton>
+                <el-buttton type="success">
+                    <i class="fa fa-level-down" aria-hidden="true"></i>
+                    导出数据
+                </el-buttton>
+
+                <el-button type="primary" icon="el-icon-plus"> 添加员工
+
+                </el-button>
+            </div> -->
+
+        </div>
+
     </div>
 </template>
 <script>
 export default {
-    name:"EmpAdv"
+    name: "EmpAdv"
 }
 </script>
 <style scoped>
-
 </style>
