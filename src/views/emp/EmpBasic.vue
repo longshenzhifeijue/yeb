@@ -6,24 +6,28 @@
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /yeb/src/views/emp/Empbasic.vue
 -->
-<template slot-scope="{}">
+<template >
     <div>
-        <div style="display:flex;justify-content:space-betwee n">
+        <div style="display:flex;justify-content:space-between">
 
-            <div>
+            <div >
                 <el-input style="width:300px;margin-right:10px ; prefix-icon=:el-icon-search"
                     placeholder="请输入员工名进行搜索...">
                 </el-input>
-                <el-buttoon type="primary" icon="el-icon-search">搜索</el-buttoon>
-                <el-button type="primary">
-                    <i class="fa fa-angle-double-down" aria-hidden="true">
-                    </i>
-                    高级搜索
-                </el-button>
+                    <el-buttoon type="primary" icon="el-icon-search">搜索</el-buttoon>
+
+                <div>
+                    <el-button type="primary">
+                        <i class="fa fa-angle-double-down" aria-hidden="true">
+                        </i>
+                        高级搜索
+                    </el-button>
+                </div>
+
             </div>
 
 
-            <div>
+        <div >
                 <el-button type="success">
                     <i class="fa fa-level-up" aria-hidden="true"></i>
                     导入数据
@@ -41,25 +45,28 @@
             </div>
 
         </div>
-        <div>
-            <el-table :data="emps" stripe broder style="width: 100%">
+        <div style="margin-top：10px">
+
+            <el-table :data="emps" stripe broder v-loading="loading" element-loading-text="拼命加载中"
+                element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)"
+                style="width: 100%">
                 <el-table-column type="selection" width="55">
 
                 </el-table-column>
 
-                <el-table-column prop="name" label="姓名"  fixed width="50">
+                <el-table-column prop="name" label="姓名" fixed width="50">
                 </el-table-column>
                 <el-table-column prop="workID" label="工号" width="90">
                 </el-table-column>
-                <el-table-column prop="gender" label="性别" width="85">
+                <el-table-column prop="gender" label="性别" width="40">
                 </el-table-column>
                 <el-table-column prop="birthday" label="出生日期" width="100">
                 </el-table-column>
 
-                <el-table-column prop="idCard" label="身份证号" width="85">
+                <el-table-column prop="idCard" label="身份证号" width="170">
                 </el-table-column>
 
-                <el-table-column prop="wedlock" label="婚姻状况" width="85">
+                <el-table-column prop="wedlock" label="婚姻状况" width="50">
                 </el-table-column>
 
                 <el-table-column prop="nation.name" label="民族" width="50">
@@ -68,25 +75,19 @@
                 <el-table-column prop="nativePlace" label="籍贯" width="50">
                 </el-table-column>
 
-                <el-table-column prop="po" label="出生日期" width="85">
+                <el-table-column prop="birthday" label="出生日期" width="100">
                 </el-table-column>
 
-                <el-table-column prop="birthday" label="出生日期" width="50">
-                </el-table-column>
-
-                <el-table-column prop="birthday" label="出生日期" width="85">
-                </el-table-column>
-
-                <el-table-column prop="birthday" label="出生日期" width="85">
+                <el-table-column prop="birthday" label="出生日期" width="100">
                 </el-table-column>
 
                 <el-table-column prop="politicsStatus.name" label="政治面貌">
                 </el-table-column>
-                <el-table-column prop="email" width="180" label="电子邮件">
+                <el-table-column prop="email" width="160" label="电子邮件">
                 </el-table-column>
-                <el-table-column prop="phone" width="100" label="电话号码">
+                <el-table-column prop="phone" width="120" label="电话号码">
                 </el-table-column>
-                <el-table-column prop="address" width="220" label="联系地址">
+                <el-table-column prop="address" width="240" label="联系地址">
                 </el-table-column>
                 <el-table-column prop="department.name" width="100" label="所属部门">
                 </el-table-column>
@@ -117,13 +118,17 @@
                 </el-table-column>
 
                 <el-table-column prop="contractTerm" width="100" label="合同期限">
-                   <template slot-scope="scope">
-                            <el-tag>{{scope.row.contraceTerm}}</el-tag>年
-                   </template>
+                    <!-- <template slot-scope="scope"> -->
+                    <template>
+
+                        <!-- <el-tag>{{ scope.row.contraceTerm }}</el-tag>年 -->
+                    </template>
                 </el-table-column>
 
-                <el-table-column label="操作" fixed="right" width="200">
-                    <template slot-scope="scope">
+                <el-table-column label="操作" fixed="right" width="310">
+                    <!-- <template slot-scope="scope"> -->
+                    <template>
+
                         <el-button>编辑</el-button>
                         <el-button type="primary">查看高级资料</el-button>
                         <el-button type="danger">删除</el-button>
@@ -134,8 +139,8 @@
 
             </el-table>
         </div>
-
     </div>
+
 </template>
 
 <script>
@@ -143,7 +148,8 @@ export default {
     name: "EmpBasic",
     data() {
         return {
-            emps: []
+            emps: [],
+            loading: false
         }
     },
     mounted() {
@@ -151,7 +157,9 @@ export default {
     },
     methods: {
         initEmps() {
+            this.loading = true;
             this.getRequest('/employee/basic/list').then(resp => {
+                this.loading = false;
                 if (resp) {
                     this.emps = resp.date;
                 }
