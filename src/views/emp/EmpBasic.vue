@@ -10,11 +10,16 @@
     <div>
         <div style="display:flex;justify-content:space-between">
 
-            <div >
+            <div>
                 <el-input style="width:300px;margin-right:10px ; prefix-icon=:el-icon-search"
-                    placeholder="请输入员工名进行搜索...">
+                  v-model="empName" @keydown.enter.native="initEmps"  
+                  clearable
+                  @clear = "initEmps"
+                  placeholder="请输入员工名进行搜索...">
                 </el-input>
-                    <el-buttoon type="primary" icon="el-icon-search">搜索</el-buttoon>
+                <el-button type="primary" 
+                
+                icon="el-icon-search" @click="initEmps">搜索</el-button>
 
                 <div>
                     <el-button type="primary">
@@ -27,7 +32,7 @@
             </div>
 
 
-        <div >
+            <div>
                 <el-button type="success">
                     <i class="fa fa-level-up" aria-hidden="true"></i>
                     导入数据
@@ -135,9 +140,15 @@
 
                     </template>
                 </el-table-column>
-
-
             </el-table>
+            <div style = "display :flex;justify-content: flex-end;">
+
+            <el-pagination background 
+            @current-change="currentChange"
+            @size-change="sizeChange"
+            layout="sizes,prev, pager, next, jumper, ->, total" :total="total">
+            </el-pagination>
+            </div>
         </div>
     </div>
 
@@ -149,19 +160,32 @@ export default {
     data() {
         return {
             emps: [],
-            loading: false
+            loading: false,
+            total:0,
+            currentPage:1,
+            size:10,
+            empName:''
         }
     },
     mounted() {
         this.initEmps();
     },
     methods: {
+        currentChange(currentPage){
+          this.currentPage=currentPage;
+          this.initEmps();      
+        },
+        sizeChange(size){
+            this.size =size;
+            this.initEmps();
+        },
         initEmps() {
             this.loading = true;
-            this.getRequest('/employee/basic/list').then(resp => {
+            this.getRequest('/employee/basic/list?currentPage='+this.currentPage+'&size='+this.size+'&name='+this.empName).then(resp => {
                 this.loading = false;
-                if (resp) {
+                if (resp) { 
                     this.emps = resp.date;
+                    this.total=resp.total;
                 }
             })
         }
